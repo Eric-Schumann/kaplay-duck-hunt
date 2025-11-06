@@ -38,20 +38,6 @@ export default () => {
     k.color(COLORS.RED),
   ]);
 
-  const duckIcons = k.add([k.pos(95, 208), k.layer("mask")]);
-
-  let duckIconPosX = 1;
-  for (let i = 0; i < 10; i++) {
-    duckIcons.add([
-      k.layer("mask"),
-      k.color(255, 255, 255),
-      k.rect(7, 9),
-      k.pos(duckIconPosX, 0),
-      `duckIcon-${i}`,
-    ]);
-    duckIconPosX += 8;
-  }
-
   const bulletUIMask = k.add([
     k.rect(0, 8),
     k.pos(25, 208),
@@ -62,9 +48,19 @@ export default () => {
   const dog = Dog(k.vec2(0, k.center().y + 7));
   dog.searchForDucks();
 
+  let duckIcons = null;
+
   const roundStartController = gm.onStateEnter(
     "round-start",
     async (isFirstRound) => {
+      duckIcons = k.add([k.pos(95, 208), k.layer("mask")]);
+
+      let duckIconPosX = 1;
+      for (let i = 0; i < 10; i++) {
+        duckIcons.add([k.rect(7, 9), k.pos(duckIconPosX, 0), `duckIcon-${i}`]);
+        duckIconPosX += 8;
+      }
+
       if (!isFirstRound) gm.preySpeed += 50;
       k.play("ui-appear");
       gm.currentRoundNum += 1;
@@ -103,10 +99,7 @@ export default () => {
       gm.currentScore += 500;
     }
     gm.numDucksShot = 0;
-    for (const duckIcon of duckIcons.children) {
-      duckIcon.color = k.color(255, 255, 255);
-      console.log(duckIcon);
-    }
+    duckIcons.destroy();
     gm.enterState("round-start");
   });
 
@@ -173,7 +166,13 @@ export default () => {
     }
   });
 
+  const forestAmbiance = k.play("forest-ambiance", {
+    volume: 0.05,
+    loop: true,
+  });
+
   k.onSceneLeave(() => {
+    forestAmbiance.stop();
     roundEndController.cancel();
     roundEndController.cancel();
     huntStartController.cancel();

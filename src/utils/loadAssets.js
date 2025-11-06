@@ -39,4 +39,5 @@ export default () => {
   k.loadSound("flapping", "sounds/flapping.ogg");
   k.loadSound("fall", "sounds/fall.wav");
   k.loadSound("impact", "sounds/impact.wav");
+  k.loadSound("forest-ambiance", "sounds/forest-ambiance.wav");
 };
