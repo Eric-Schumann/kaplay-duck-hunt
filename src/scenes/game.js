@@ -181,4 +181,26 @@ export default () => {
     duckEscapedController.cancel();
     gm.resetGameState();
   });
+
+  k.onKeyPress((key) => {
+    const audioCtx = new AudioContext();
+    if (key === "p") {
+      k.getTreeRoot().paused = !k.getTreeRoot().paused;
+      if (k.getTreeRoot().paused) {
+        gm.isGamePaused = true;
+        audioCtx.suspend();
+        k.add([
+          k.text("PAUSED", FONT_CONFIG),
+          k.pos(5, 5),
+          k.layer("ui"),
+          "paused-text",
+        ]);
+      } else {
+        gm.isGamePaused = false;
+        audioCtx.resume();
+        const pausedText = k.get("paused-text")[0];
+        if (pausedText) pausedText.destroy();
+      }
+    }
+  });
 };
